@@ -19,79 +19,45 @@ export default function LoginForm() {
     const [isRegister, setIsRegister] = useState(false);
 
 
-    // เชื่อมต่อ API backend
-    const handleSubmit = async (e: React.FormEvent) => {
+    // Mock Auth (localStorage)
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
         if (isRegister) {
             if (!name.trim() || !email.trim() || !password.trim()) {
                 setError('กรุณากรอกข้อมูลให้ครบ');
                 return;
             }
-            try {
-                const res = await fetch('http://localhost:4001/api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: email, password })
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    setError(data.error || 'สมัครสมาชิกไม่สำเร็จ');
-                    return;
-                }
-                // Patch: Always set name and email for new user
-                const safeUser = {
-                    id: data.user.id?.toString() || '',
-                    name: name || email.split('@')[0] || email,
-                    email: email,
-                };
-                dispatch({ type: 'LOGIN', payload: safeUser });
-                setSuccess('สมัครสมาชิกสำเร็จ!');
-                setIsRegister(false);
-                setName('');
-                setEmail('');
-                setPassword('');
-            } catch {
-                setError('เกิดข้อผิดพลาด');
+            if (users.some((u: any) => u.email === email)) {
+                setError('Email นี้ถูกใช้แล้ว');
+                return;
             }
+            const newUser = {
+                id: 'u' + Date.now(),
+                name: name,
+                email: email,
+                password: password,
+            };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            dispatch({ type: 'LOGIN', payload: newUser });
+            setSuccess('สมัครสมาชิกสำเร็จ!');
+            setIsRegister(false);
+            setName('');
+            setEmail('');
+            setPassword('');
             return;
         }
         // Login logic
-        try {
-            const res = await fetch('http://localhost:4001/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: email, password })
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                setError(data.error || 'เข้าสู่ระบบไม่สำเร็จ');
-                return;
-            }
-            // เก็บ token ใน Local Storage
-            localStorage.setItem('token', data.token);
-            // ดึงข้อมูล user
-            const userRes = await fetch('http://localhost:4001/api/auth/me', {
-                headers: { 'Authorization': `Bearer ${data.token}` }
-            });
-            const userData = await userRes.json();
-            if (userRes.ok) {
-                // Patch: Always set name and email for user
-                let safeName = userData.user.name;
-                let safeEmail = userData.user.email || userData.user.username || '';
-                if (!safeName && safeEmail) {
-                    safeName = safeEmail.split('@')[0];
-                }
-                const safeUser = {
-                    ...userData.user,
-                    name: safeName || safeEmail || '',
-                    email: safeEmail,
-                };
-                dispatch({ type: 'LOGIN', payload: safeUser });
-            }
-        } catch {
-            setError('เกิดข้อผิดพลาด');
+        const user = users.find((u: any) => u.email === email && u.password === password);
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            dispatch({ type: 'LOGIN', payload: user });
+        } else {
+            setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
         }
     };
 

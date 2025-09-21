@@ -1,6 +1,3 @@
-# กำหนดชื่อ repository ให้ตรงกับ GitHub ของคุณ
-# ตัวอย่างสำหรับ main branch
-
 # .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 
