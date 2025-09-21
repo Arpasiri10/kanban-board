@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Bell, X, Check } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 

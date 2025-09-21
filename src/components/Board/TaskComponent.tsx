@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Tag, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { demoUsers } from '../../data/demoData';
 import { Task } from '../../types';
@@ -275,7 +275,6 @@ export default function TaskComponent({ task }: TaskComponentProps) {
                                     {allUsers
                                         .filter(user => user.name && user.name.trim() !== '' && user.name.trim() !== 'ไม่ระบุ' && user.email && user.email.trim() !== '')
                                         .map((user: { id: string; name: string; email?: string; color?: string }) => {
-                                            const color = getUserColor(user);
                                             const display = user.name;
                                             const isCurrent = user.id === state.auth.user?.id;
                                             return (

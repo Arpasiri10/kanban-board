@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import LoginForm from './components/Auth/LoginForm';
 import BoardList from './components/Board/BoardList';

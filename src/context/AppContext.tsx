@@ -23,7 +23,7 @@ export function removeBoardMember(boardId: string, userId: string) {
     localStorage.setItem('kanban-app-state', JSON.stringify(state));
 }
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect } from 'react';
 import { AppState, User, Board, Column, Task, Notification } from '../types';
 import { demoBoards, demoColumns, demoTasks, demoUsers } from '../data/demoData';
 
@@ -256,7 +256,7 @@ function getInitialState(): AppState & { users?: User[] } {
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
     // ไม่ merge demoUsers อัตโนมัติใน users (users = เฉพาะบัญชีจริง)
-    const [state, dispatch] = useReducer(appReducer, initialState, (init) => getInitialState());
+    const [state, dispatch] = useReducer(appReducer, initialState, getInitialState);
 
 
     // Save state to localStorage whenever it changes

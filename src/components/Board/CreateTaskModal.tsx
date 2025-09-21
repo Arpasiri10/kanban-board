@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, User } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Task } from '../../types';
@@ -22,8 +22,6 @@ export default function CreateTaskModal({ columnId, boardId, onClose }: CreateTa
 
     // ใช้ state.users เป็นหลัก ถ้ามีผู้ใช้จริงในระบบ
     // รวม users จริงกับ demoUsers แบบไม่ซ้ำ id
-    const [refreshKey, setRefreshKey] = useState(0);
-    useEffect(() => { setRefreshKey(k => k + 1); }, [state.users]);
     let allUsers = [
         ...(state.users || []),
         ...demoUsers.filter(d => !(state.users || []).some(u => u.id === d.id))
@@ -60,8 +58,6 @@ export default function CreateTaskModal({ columnId, boardId, onClose }: CreateTa
 
     // Fallback: ใช้ name ถ้ามี, ถ้าไม่มีใช้ email
     // Always fallback: name > email > 'ไม่ระบุ'
-    const getUserDisplay = (user: { name?: string; email?: string }) =>
-        user.name && user.name.trim() !== '' ? user.name : (user.email && user.email.trim() !== '' ? user.email : 'ไม่ระบุ');
 
 
     const handleSubmit = (e: React.FormEvent) => {
